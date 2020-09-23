@@ -1,0 +1,30 @@
+plugins {
+    id "org.jetbrains.kotlin.jvm" version "1.4.10"
+    id "application"
+}
+
+group = "me.serge"
+version = "1.0-SNAPSHOT"
+
+repositories {
+    mavenCentral()
+}
+dependencies {
+    implementation("junit:junit:4.8.2")
+}
+
+application {
+    mainClassName = "VirtualMemory"
+}
+
+sourceSets {
+    main.java.srcDirs = ['src/']
+    test.java.srcDirs = ['src/tests']
+}
+
+test {
+    testLogging {
+        events "failed"
+        exceptionFormat "full"
+    }
+}
