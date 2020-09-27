@@ -1,5 +1,9 @@
 @file: JvmName("VirtualMemory")
 
+import com.xenomachina.argparser.ArgParser
+
 fun main(args: Array<String>) {
-    println("Hello World!")
+    ArgParser(args).parseInto(::ArgumentsParser).run {
+        println("Hello World!")
+    }
 }
