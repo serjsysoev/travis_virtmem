@@ -1,5 +1,4 @@
 import java.util.*
-import kotlin.collections.ArrayList
 
 class FIFOMemory(val size: Int, val totalPages: Int) {
     private val isPageInMemory = BooleanArray(this.totalPages) { false }
@@ -10,6 +9,10 @@ class FIFOMemory(val size: Int, val totalPages: Int) {
         memory.add(page)
         isPageInMemory[page] = true
 
-        return if (memory.size <= this.size) -1 else memory.removeFirst()
+        return if (memory.size <= this.size) -1 else {
+            val removedPage = memory.removeFirst()
+            isPageInMemory[removedPage] = false
+            return removedPage
+        }
     }
 }
