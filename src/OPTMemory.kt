@@ -30,16 +30,18 @@ class OPTMemory(val size: Int, val totalPages: Int) {
             return -1
         }
 
+        val result = if (memory.size == this.size) {
+            val pageWithIndex = memory.last()
+            memory.remove(pageWithIndex)
+            isPageInMemory[pageWithIndex.page] = false
+            pageWithIndex.page
+        } else -1
+
         val newIndex = if (pageFutureQueries.isEmpty()) Int.MAX_VALUE else pageFutureQueries.first
         memory.add(PageWithIndex(page, newIndex))
         isPageInMemory[page] = true
 
-        return if (memory.size <= this.size) -1 else {
-            val pageWithIndex = memory.last()
-            memory.remove(pageWithIndex)
-            isPageInMemory[pageWithIndex.page] = false
-            return pageWithIndex.page
-        }
+        return result
     }
 
     fun constructFutureQueries(queries: List<Int>) {

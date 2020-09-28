@@ -11,7 +11,7 @@ Running unit tests:
 gradlew(.bat) test
 ```
 **Input file format**:
-Each line contains number of page to be loaded into memory.
+Each line contains number of page(0 <= page < max pages) to be loaded into memory.
 
 **Output format**:
 Each line contains 3 numbers.
@@ -20,4 +20,4 @@ Each line contains 3 numbers.
 3rd is from OPT memory.
 Output contains page number if page had to be unloaded in order to lad new page or -1 if no pages were unloaded.
 
-data/ directory contains sample inputs.
+data/ directory contains sample inputs with names formatted like input{test number}\_{max pages}\_{ram pages}.
