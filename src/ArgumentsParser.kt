@@ -4,6 +4,7 @@ import com.xenomachina.argparser.default
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.PrintWriter
+import kotlin.random.Random
 
 class ArgumentsParser(parser: ArgParser) {
     val input by parser.storing(
@@ -18,7 +19,7 @@ class ArgumentsParser(parser: ArgParser) {
         } catch (ex: java.lang.NumberFormatException) {
             throw InvalidArgumentException("Input file contains lines that can't be converted to integer")
         }
-    }
+    }.default { ArrayList<Int>() }
 
     val output by parser.storing(
         "-o", "--output",
@@ -32,7 +33,7 @@ class ArgumentsParser(parser: ArgParser) {
     }.default(PrintWriter(System.out))
 
     val totalPages by parser.storing(
-        "-t", "--total-pages",
+        "-p", "--total-pages",
         help = "Total pages in memory"
     ) {
         try {
@@ -52,5 +53,18 @@ class ArgumentsParser(parser: ArgParser) {
             throw InvalidArgumentException("$this is not an integer")
         }
     }
+
+    val tests by parser.storing(
+        "-t", "--test-size",
+        help = "Amount of lines to generate(used instead of input file)"
+    ) {
+        try {
+             val tests = List(this.toInt()) { Random.nextInt(0, totalPages) }
+            println(tests)
+            tests
+        } catch (ex: NumberFormatException) {
+            throw InvalidArgumentException("$this is not an integer")
+        }
+    }.default { ArrayList<Int>() }
 
 }
