@@ -10,8 +10,8 @@ repositories {
     mavenCentral()
 }
 dependencies {
-    implementation("junit:junit:4.8.2")
     implementation("com.xenomachina:kotlin-argparser:2.0.7")
+    implementation 'org.junit.jupiter:junit-jupiter:5.4.2'
 }
 
 application {
@@ -20,10 +20,11 @@ application {
 
 sourceSets {
     main.java.srcDirs = ['src/']
-    test.java.srcDirs = ['src/tests']
+    test.java.srcDirs = ['tests/']
 }
 
 test {
+    useJUnitPlatform()
     testLogging {
         events "failed"
         exceptionFormat "full"

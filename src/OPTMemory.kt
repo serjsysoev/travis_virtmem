@@ -14,42 +14,47 @@ class OPTMemory(val size: Int, val totalPages: Int) {
     private var queryID = -1
     private var constructedFutureQueries = false
 
+    private fun removePage(pageWithIndex: PageWithIndex): PageWithIndex {
+        memory.remove(pageWithIndex)
+        isPageInMemory[pageWithIndex.page] = false
+        return pageWithIndex
+    }
+
+    private fun addPage(pageWithIndex: PageWithIndex): PageWithIndex {
+        memory.add(pageWithIndex)
+        isPageInMemory[pageWithIndex.page] = true
+        return pageWithIndex
+    }
+
     fun getPage(page: Int): Int {
-        if (!constructedFutureQueries) {
-            throw IllegalStateException("You must call constructFutureQueries first!")
-        }
+        if (!constructedFutureQueries) throw IllegalStateException("You must call constructFutureQueries first!")
+
         queryID++
         val pageFutureQueries = futureQueries[page]
             ?: run { throw InvalidArgumentException("This page wasn't specified in constructFutureQueries") }
         pageFutureQueries.removeFirst()
+        val newIndex = if (pageFutureQueries.isEmpty()) Int.MAX_VALUE else pageFutureQueries.first
 
         if (isPageInMemory[page]) {
-            memory.remove(PageWithIndex(page, queryID))
-            val newIndex = if (pageFutureQueries.isEmpty()) Int.MAX_VALUE else pageFutureQueries.first
-            memory.add(PageWithIndex(page, newIndex))
+            removePage(PageWithIndex(page, queryID))
+            addPage(PageWithIndex(page, newIndex))
             return -1
         }
 
-        val result = if (memory.size == this.size) {
-            val pageWithIndex = memory.last()
-            memory.remove(pageWithIndex)
-            isPageInMemory[pageWithIndex.page] = false
-            pageWithIndex.page
-        } else -1
-
-        val newIndex = if (pageFutureQueries.isEmpty()) Int.MAX_VALUE else pageFutureQueries.first
-        memory.add(PageWithIndex(page, newIndex))
-        isPageInMemory[page] = true
-
+        val result = if (memory.size == this.size) removePage(memory.last()).page else -1
+        addPage(PageWithIndex(page, newIndex))
         return result
     }
 
     fun constructFutureQueries(queries: List<Int>) {
+        if (constructedFutureQueries) throw IllegalStateException("You already called constructFutureQueries!")
+
         queries.forEachIndexed { index, page ->
             futureQueries[page]?.add(index) ?: run {
                 futureQueries[page] = LinkedList(listOf(index))
             }
         }
+
         constructedFutureQueries = true
     }
 }
