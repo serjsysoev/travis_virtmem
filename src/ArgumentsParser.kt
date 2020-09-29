@@ -33,7 +33,7 @@ class ArgumentsParser(parser: ArgParser) {
     }.default(PrintWriter(System.out))
 
     val totalPages by parser.storing(
-        "-p", "--total-pages",
+        "-n", "--total-pages", // -n because it's called N in README.md
         help = "Total pages in memory"
     ) {
         try {
@@ -44,7 +44,7 @@ class ArgumentsParser(parser: ArgParser) {
     }
 
     val RAMPages by parser.storing(
-        "-r", "--ram-pages",
+        "-m", "--ram-pages", // -m because it's called M in README.md
         help = "Amount of pages that fit into RAM"
     ) {
         try {
@@ -67,4 +67,8 @@ class ArgumentsParser(parser: ArgParser) {
         }
     }.default { ArrayList<Int>() }
 
+    val plot by parser.flagging(
+        "-p", "--plot",
+        help = "Plot results"
+    )
 }

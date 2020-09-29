@@ -20,4 +20,8 @@ Each line contains 3 numbers.
 3rd is from OPT memory.
 Output contains page number if page had to be unloaded in order to lad new page or -1 if no pages were unloaded.
 
+If test generator is being used, test generator will print test to console.
+
+If -p flag is present script will draw the chart. You can export it by right clicking on it. 
+
 data/ directory contains sample inputs with names formatted like input{test number}\_{max pages}\_{ram pages}.
