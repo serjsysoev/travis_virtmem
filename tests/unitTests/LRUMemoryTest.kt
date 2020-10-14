@@ -1,3 +1,6 @@
+package unitTests
+
+import LRUMemory
 import org.junit.jupiter.api.Test
 
 import org.junit.jupiter.api.Assertions.*

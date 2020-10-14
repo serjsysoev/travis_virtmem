@@ -31,3 +31,12 @@ test {
         exceptionFormat "full"
     }
 }
+
+task unitTest(type: Test){
+    exclude 'integrationTests/**'
+    useJUnitPlatform()
+}
+task integrationTest(type: Test){
+    exclude 'unitTests/**'
+    useJUnitPlatform()
+}

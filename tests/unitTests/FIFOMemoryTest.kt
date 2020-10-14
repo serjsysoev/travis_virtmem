@@ -1,9 +1,11 @@
+package unitTests
+
+import FIFOMemory
 import org.junit.jupiter.api.Test
 
 import org.junit.jupiter.api.Assertions.*
 
 internal class FIFOMemoryTest {
-
     @Test
     fun memoryOverflow() {
         val fifoMemory = FIFOMemory(2, 4)

@@ -2,6 +2,7 @@
 
 import com.xenomachina.argparser.ArgParser
 import com.xenomachina.argparser.InvalidArgumentException
+import com.xenomachina.argparser.mainBody
 import org.knowm.xchart.SwingWrapper
 import org.knowm.xchart.XYChart
 import org.knowm.xchart.XYChartBuilder
@@ -18,6 +19,7 @@ fun addSeriesToChart(chart: XYChart, seriesName: String, values: List<Int>) {
     for (element in values) {
         result.add(result.last() + if (element != -1) 1 else 0)
     }
+
     chart.addSeries(
         seriesName,
         List(values.size + 1) { it },
@@ -36,7 +38,7 @@ fun plot(values: List<Triple<Int, Int, Int>>) {
         .build()
 
     chart.styler.legendPosition = LegendPosition.InsideNW
-    chart.styler.defaultSeriesRenderStyle = XYSeriesRenderStyle.Area
+    chart.styler.defaultSeriesRenderStyle = XYSeriesRenderStyle.Line
     chart.styler.setAxisTitlesVisible(false)
 
     addSeriesToChart(chart, "FIFO", List(values.size) { values[it].first })
@@ -46,7 +48,7 @@ fun plot(values: List<Triple<Int, Int, Int>>) {
     SwingWrapper(chart).setTitle("Virtual memory types comparison").displayChart()
 }
 
-fun main(args: Array<String>) {
+fun main(args: Array<String>) = mainBody {
     ArgParser(args).parseInto(::ArgumentsParser).run {
         if (tests.isEmpty() && input.isEmpty()) {
             throw InvalidArgumentException("No input values present. Please refer to --help")
@@ -56,11 +58,17 @@ fun main(args: Array<String>) {
         val fifoMemory = FIFOMemory(RAMPages, totalPages)
         val lruMemory = LRUMemory(RAMPages, totalPages)
         val optMemory = OPTMemory(RAMPages, totalPages)
-        optMemory.constructFutureQueries(pagesQueue)
 
-        val result = pagesQueue.map { Triple(fifoMemory.getPage(it), lruMemory.getPage(it), optMemory.getPage(it)) }
+        val result = try {
+            optMemory.constructFutureQueries(pagesQueue)
+            pagesQueue.map { Triple(fifoMemory.getPage(it), lruMemory.getPage(it), optMemory.getPage(it)) }
+        } catch (ex: IllegalStateException) {
+            return@mainBody println(if (debug) ex.stackTraceToString() else ex.message)
+        }
 
-        result.forEach { println(it) }
+        result.forEach { triple ->
+            output.println("${triple.first} ${triple.second} ${triple.third}")
+        }
         output.flush()
         output.close()
 

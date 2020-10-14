@@ -3,6 +3,7 @@ import com.xenomachina.argparser.InvalidArgumentException
 import com.xenomachina.argparser.default
 import java.io.File
 import java.io.FileNotFoundException
+import java.io.IOException
 import java.io.PrintWriter
 import kotlin.random.Random
 
@@ -11,13 +12,12 @@ class ArgumentsParser(parser: ArgParser) {
         "-i", "--input",
         help = "Input file with words separated by \\n (required)"
     ) {
-        if (!File(this).isFile) throw InvalidArgumentException("$this is not a file")
-        if (!File(this).canRead()) throw InvalidArgumentException("$this is not readable")
-        val lines = File(this).readLines()
         try {
-            lines.map { it.toInt() }
-        } catch (ex: java.lang.NumberFormatException) {
+            File(this).readLines().map { it.toInt() }
+        } catch (ex: NumberFormatException) {
             throw InvalidArgumentException("Input file contains lines that can't be converted to integer")
+        } catch (ex: IOException) {
+            throw InvalidArgumentException("Error reading input file")
         }
     }.default { ArrayList<Int>() }
 
@@ -28,7 +28,7 @@ class ArgumentsParser(parser: ArgParser) {
         try {
             File(this).printWriter()
         } catch (ex: FileNotFoundException) {
-            throw InvalidArgumentException("$this is not writable")
+            throw InvalidArgumentException("Output file is not writable")
         }
     }.default(PrintWriter(System.out))
 
@@ -39,7 +39,7 @@ class ArgumentsParser(parser: ArgParser) {
         try {
             this.toInt()
         } catch (ex: NumberFormatException) {
-            throw InvalidArgumentException("$this is not an integer")
+            throw InvalidArgumentException("Total pages can not be converted to integer")
         }
     }
 
@@ -50,7 +50,7 @@ class ArgumentsParser(parser: ArgParser) {
         try {
             this.toInt()
         } catch (ex: NumberFormatException) {
-            throw InvalidArgumentException("$this is not an integer")
+            throw InvalidArgumentException("Ram pages can not be converted to integer")
         }
     }
 
@@ -58,17 +58,22 @@ class ArgumentsParser(parser: ArgParser) {
         "-t", "--test-size",
         help = "Amount of lines to generate(used instead of input file)"
     ) {
-        try {
-             val tests = List(this.toInt()) { Random.nextInt(0, totalPages) }
-            println(tests)
-            tests
+        val tests = try {
+            List(this.toInt()) { Random.nextInt(0, totalPages) }
         } catch (ex: NumberFormatException) {
-            throw InvalidArgumentException("$this is not an integer")
+            throw InvalidArgumentException("Test size can not be converted to integer")
         }
+        println(tests)
+        tests
     }.default { ArrayList<Int>() }
 
     val plot by parser.flagging(
         "-p", "--plot",
         help = "Plot results"
+    )
+
+    val debug by parser.flagging(
+        "-d", "--debug",
+        help = "Prints exception with stacktrace"
     )
 }

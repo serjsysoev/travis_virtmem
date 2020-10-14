@@ -1,3 +1,6 @@
+package unitTests
+
+import OPTMemory
 import com.xenomachina.argparser.InvalidArgumentException
 import org.junit.jupiter.api.Test
 
