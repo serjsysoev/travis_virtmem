@@ -26,4 +26,4 @@ for file in files:
 
 print()
 print(f"Passed {result} out of {test_count} tests")
-exit(test_count == result)
+exit(test_count != result)
