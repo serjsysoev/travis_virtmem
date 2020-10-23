@@ -3,9 +3,6 @@ plugins {
     id "application"
 }
 
-group = "me.serge"
-version = "1.0-SNAPSHOT"
-
 repositories {
     mavenCentral()
 }
@@ -39,4 +36,17 @@ task unitTest(type: Test){
 task integrationTest(type: Test){
     exclude 'unitTests/**'
     useJUnitPlatform()
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': "VirtualMemory"
+    }
+
+    from sourceSets.main.output
+
+    dependsOn configurations.runtimeClasspath
+    from {
+        configurations.runtimeClasspath.findAll { it.name.endsWith('jar') }.collect { zipTree(it) }
+    }
 }
