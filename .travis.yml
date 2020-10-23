@@ -4,4 +4,4 @@ before_script:
   - ./gradlew jar
 
 script:
-  - ./script.sh 
+  - python3 script.sh
