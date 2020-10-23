@@ -6,4 +6,4 @@ before_script:
 install: true
 
 script:
-  - python3 script.sh
+  - python3 test.py
