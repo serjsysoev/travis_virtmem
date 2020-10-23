@@ -3,5 +3,7 @@ language: java
 before_script:
   - ./gradlew jar
 
+install: true
+
 script:
   - python3 script.sh
